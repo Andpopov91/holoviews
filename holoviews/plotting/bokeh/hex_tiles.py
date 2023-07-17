@@ -2,6 +2,7 @@ from collections.abc import Callable
 
 import param
 import numpy as np
+import pandas as pd
 
 from bokeh.util.hex import cartesian_to_axial
 
@@ -81,13 +82,27 @@ class hex_binning(Operation):
         xd, yd = (element.get_dimension(i) for i in indexes)
         xdn, ydn = xd.clone(range=(x0, x1)), yd.clone(range=(y0, y1))
         kdims = [ydn, xdn] if self.p.invert_axes else [xdn, ydn]
+        
         agg = (
             element.clone(data, kdims=kdims, vdims=vdims)
-            .aggregate(function=np.sum)
+            )
+        
+        df_temp = agg.dframe()
+        df_temp_grouped = df_temp.groupby(kdims).count()
+        df_temp_grouped_filtered = df_temp_grouped[df_temp_grouped[vdims[0]] > self.p.min_count]
+        
+        data = pd.merge(left = df_temp,
+                         right = df_temp_grouped_filtered.reset_index()[kdims],
+                         how = 'inner',
+                         on = kdims)
+        
+        agg = (
+            element.clone(data, kdims=kdims, vdims=vdims)
+            .aggregate(function=aggregator)
         )
-        if self.p.min_count is not None and self.p.min_count > 1:
-            agg = agg[:, :, self.p.min_count:]
-        agg = agg.aggregate(function=aggregator)
+        # if self.p.min_count is not None and self.p.min_count > 1:
+        #     agg = agg[:, :, self.p.min_count:]
+
         agg.cdims = {xd.name: xdn, yd.name: ydn}
         return agg
 
