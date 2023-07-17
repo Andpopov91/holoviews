@@ -83,10 +83,11 @@ class hex_binning(Operation):
         kdims = [ydn, xdn] if self.p.invert_axes else [xdn, ydn]
         agg = (
             element.clone(data, kdims=kdims, vdims=vdims)
-            .aggregate(function=aggregator)
+            .aggregate(function=np.sum)
         )
         if self.p.min_count is not None and self.p.min_count > 1:
             agg = agg[:, :, self.p.min_count:]
+        agg = agg.aggregate(function=aggregator)
         agg.cdims = {xd.name: xdn, yd.name: ydn}
         return agg
 
