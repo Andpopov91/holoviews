@@ -87,6 +87,8 @@ class hex_binning(Operation):
             element.clone(data, kdims=kdims, vdims=vdims)
             )
         
+        raise ValueError()
+        
         df_temp = agg.dframe()
         df_temp_grouped = df_temp.groupby(kdims).count()
         df_temp_grouped_filtered = df_temp_grouped[df_temp_grouped[vdims[0]] > self.p.min_count]
@@ -95,6 +97,9 @@ class hex_binning(Operation):
                          right = df_temp_grouped_filtered.reset_index()[kdims],
                          how = 'inner',
                          on = kdims)
+        
+        if self.p.min_count == 13:
+            1 / 0
         
         agg = (
             element.clone(data, kdims=kdims, vdims=vdims)
