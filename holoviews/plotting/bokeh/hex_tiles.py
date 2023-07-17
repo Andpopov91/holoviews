@@ -85,19 +85,19 @@ class hex_binning(Operation):
         
         agg = (element.clone(data, kdims=kdims, vdims=vdims)
                 )
-        
-        
+
+
+
         df_temp = agg.dframe()
-        print(f"Dataset acquired with length: {len(df_temp)}")
-        df_temp_grouped = df_temp.groupby(kdims).count()
+        df_temp.reset_index(inplace = True)
+        df_temp_grouped = df_temp.groupby(by = ['longitude' , 'latitude']).count() #['longitude' , 'latitude'] should be kdims variable, but currently kdims has a type which I am not sure how to convert to a list
         df_temp_grouped_filtered = df_temp_grouped[(df_temp_grouped > self.p.min_count).any(1)]
         
         data = pd.merge(left = df_temp,
-                         right = df_temp_grouped_filtered.reset_index()[kdims],
+                         right = df_temp_grouped_filtered.reset_index()[['longitude' , 'latitude']],
                          how = 'inner',
-                         on = kdims)
+                         on = ['longitude' , 'latitude'])
         
-        print(f"Dataset filtered with length: {len(data)}")
         
         agg = (
             element.clone(data, kdims=kdims, vdims=vdims)
@@ -108,7 +108,6 @@ class hex_binning(Operation):
 
         agg.cdims = {xd.name: xdn, yd.name: ydn}
         return agg
-
 
 compositor = Compositor(
     "HexTiles", hex_binning, None, 'data', output_type=HexTiles,
