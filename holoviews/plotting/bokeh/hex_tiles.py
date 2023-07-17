@@ -83,13 +83,12 @@ class hex_binning(Operation):
         xdn, ydn = xd.clone(range=(x0, x1)), yd.clone(range=(y0, y1))
         kdims = [ydn, xdn] if self.p.invert_axes else [xdn, ydn]
         
-        agg = (
-            element.clone(data, kdims=kdims, vdims=vdims)
-            )
+        agg = (element.clone(data, kdims=kdims, vdims=vdims)
+                )
         
-        raise ValueError()
         
         df_temp = agg.dframe()
+        print(f"Dataset acquired with length: {len(df_temp)}")
         df_temp_grouped = df_temp.groupby(kdims).count()
         df_temp_grouped_filtered = df_temp_grouped[df_temp_grouped[vdims[0]] > self.p.min_count]
         
@@ -98,8 +97,7 @@ class hex_binning(Operation):
                          how = 'inner',
                          on = kdims)
         
-        if self.p.min_count == 13:
-            1 / 0
+        print(f"Dataset filtered with length: {len(data)}")
         
         agg = (
             element.clone(data, kdims=kdims, vdims=vdims)
