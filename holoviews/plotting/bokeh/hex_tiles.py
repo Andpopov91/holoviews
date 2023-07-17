@@ -90,7 +90,7 @@ class hex_binning(Operation):
         df_temp = agg.dframe()
         print(f"Dataset acquired with length: {len(df_temp)}")
         df_temp_grouped = df_temp.groupby(kdims).count()
-        df_temp_grouped_filtered = df_temp_grouped[df_temp_grouped[vdims[0]] > self.p.min_count]
+        df_temp_grouped_filtered = df_temp_grouped[(df_temp_grouped > self.p.min_count).any(1)]
         
         data = pd.merge(left = df_temp,
                          right = df_temp_grouped_filtered.reset_index()[kdims],
