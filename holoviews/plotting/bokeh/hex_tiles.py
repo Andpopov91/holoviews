@@ -83,15 +83,14 @@ class hex_binning(Operation):
         xdn, ydn = xd.clone(range=(x0, x1)), yd.clone(range=(y0, y1))
         kdims = [ydn, xdn] if self.p.invert_axes else [xdn, ydn]
         
-        agg = (element.clone(data, kdims=kdims, vdims=vdims)
-                )
-
-
+        agg = (element.clone(data, 
+                             kdims=['longitude' , 'latitude'], 
+                             vdims=['device_id_time']))
 
         df_temp = agg.dframe()
         df_temp.reset_index(inplace = True)
 
-        print('columns:' ,df_temp)
+        print('df preview:' ,df_temp)
 
         # Below is a bit changed to count unique 'device_id_time' in the given square
         # df_temp_grouped = df_temp.groupby(by = ['longitude' , 'latitude']).count() #['longitude' , 'latitude'] should be kdims variable, but currently kdims has a type which I am not sure how to convert to a list
