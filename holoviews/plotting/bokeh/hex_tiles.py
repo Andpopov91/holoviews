@@ -84,8 +84,11 @@ class hex_binning(Operation):
         kdims = [ydn, xdn] if self.p.invert_axes else [xdn, ydn]
         
         agg = (element.clone(data, 
-                             kdims=['longitude' , 'latitude'],  #['longitude' , 'latitude'] should be kdims variable, but currently kdims has a type which I am not sure how to convert to a list
-                             vdims= list(vdims) + ['device_id_time'])) #originally vdims variable here
+                             kdims=kdims,
+                             vdims=vdims))
+
+                            #  kdims=['longitude' , 'latitude'],  #['longitude' , 'latitude'] should be kdims variable, but currently kdims has a type which I am not sure how to convert to a list
+                            #  vdims= list(vdims) + ['device_id_time'])) #originally vdims variable here
 
         df_temp = agg.dframe()
         df_temp.reset_index(inplace = True)
