@@ -93,21 +93,11 @@ class hex_binning(Operation):
         df_temp = agg.dframe()
         df_temp.reset_index(inplace = True)
 
-        print('df preview: \n')
-        print(df_temp)
-
         # Below is a bit changed to count min unique 'device_id_time' for each individual displayed hex
         # df_temp_grouped = df_temp.groupby(by = ['longitude' , 'latitude']).count() #['longitude' , 'latitude'] should be kdims variable, but currently kdims has a type which I am not sure how to convert to a list
         df_temp_grouped = df_temp.groupby(by = ['longitude' , 'latitude'])['device_id_time'].nunique() #['longitude' , 'latitude'] should be kdims variable, but currently kdims has a type which I am not sure how to convert to a list
-
-        print('grouped df is:')
-        print(df_temp_grouped)
         
         df_temp_grouped_filtered = df_temp_grouped[(df_temp_grouped > self.p.min_count)]#.any(1)]
-
-        print('filtered grouped df is:')
-        print(df_temp_grouped_filtered)
-
         
         data = pd.merge(left = df_temp,
                          right = df_temp_grouped_filtered.reset_index()[['longitude' , 'latitude']],
