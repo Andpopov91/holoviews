@@ -102,7 +102,12 @@ class hex_binning(Operation):
 
         print('grouped df is:')
         print(df_temp_grouped)
-        df_temp_grouped_filtered = df_temp_grouped[(df_temp_grouped > self.p.min_count).any(1)]
+        
+        df_temp_grouped_filtered = df_temp_grouped[(df_temp_grouped > self.p.min_count)]#.any(1)]
+
+        print('filtered grouped df is:')
+        print(df_temp_grouped_filtered)
+
         
         data = pd.merge(left = df_temp,
                          right = df_temp_grouped_filtered.reset_index()[['longitude' , 'latitude']],
